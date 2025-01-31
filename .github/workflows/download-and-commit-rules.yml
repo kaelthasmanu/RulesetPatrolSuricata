@@ -20,6 +20,7 @@ jobs:
     - name: Extract tar.gz
       run: |
         tar -xzf paw-patrules.tar.gz
+        ls ./
 
     - name: Move rules to repository
       run: |
