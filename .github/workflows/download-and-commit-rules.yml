@@ -1,0 +1,34 @@
+name: Download and Commit Suricata Rules
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Se ejecuta todos los días a medianoche UTC
+  workflow_dispatch:  # Permite ejecutar manualmente el workflow
+
+jobs:
+  download-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Download Suricata Rules
+      run: |
+        wget https://rules.pawpatrules.fr/suricata/paw-patrules.tar.gz -O paw-patrules.tar.gz
+
+    - name: Extract tar.gz
+      run: |
+        tar -xzf paw-patrules.tar.gz
+
+    - name: Move rules to repository
+      run: |
+        mv paw-patrules/rules/*.rules ./
+
+    - name: Commit changes
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add *.rules
+        git commit -m "Update Suricata rules [skip ci]"
+        git push
