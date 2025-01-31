@@ -8,13 +8,20 @@ on:
 jobs:
   download-and-commit:
     runs-on: ubuntu-latest
-    environment: GH_TOKEN
 
     steps:
+    - name: Configure SSH
+      run: |
+        # Configura el agente SSH y añade la clave privada
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSHKEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        token: ${{ secrets.GH_TOKEN }}  # Usa el token de acceso personal
+        ssh-key: ${{ secrets.SSHKEY }}  # Usa la clave SSH privada
 
     - name: Download Suricata Rules
       run: |
