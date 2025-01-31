@@ -34,7 +34,7 @@ jobs:
 
     - name: Move rules to repository
       run: |
-        mv paw-patrules/rules/*.rules ./  # Asegúrate de que la ruta sea correcta
+        mv rules/*.rules ./  # Asegúrate de que la ruta sea correcta
 
     - name: Commit changes
       run: |
