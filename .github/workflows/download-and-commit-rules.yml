@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GH_TOKEN }}  # Usa el token de acceso personal
 
     - name: Download Suricata Rules
       run: |
@@ -20,11 +22,11 @@ jobs:
     - name: Extract tar.gz
       run: |
         tar -xzf paw-patrules.tar.gz
-        ls ./
+        ls ./  # Lista el contenido para verificar la extracción
 
     - name: Move rules to repository
       run: |
-        mv rules/*.rules ./
+        mv paw-patrules/rules/*.rules ./  # Asegúrate de que la ruta sea correcta
 
     - name: Commit changes
       run: |
@@ -32,4 +34,4 @@ jobs:
         git config --global user.email "manuelalberto.gorrin@gmail.com"
         git add *.rules
         git commit -m "Update Suricata rules [skip ci]"
-        git push
+        git push origin main  # Asegúrate de usar la rama correcta
