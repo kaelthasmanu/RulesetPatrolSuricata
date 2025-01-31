@@ -20,6 +20,7 @@ jobs:
     - name: Extract tar.gz
       run: |
         tar -xzf paw-patrules.tar.gz
+        ls ./
 
     - name: Move rules to repository
       run: |
@@ -27,8 +28,8 @@ jobs:
 
     - name: Commit changes
       run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
+        git config --global user.name "Manuel"
+        git config --global user.email "manuelalberto.gorrin@gmail.com"
         git add *.rules
         git commit -m "Update Suricata rules [skip ci]"
         git push
