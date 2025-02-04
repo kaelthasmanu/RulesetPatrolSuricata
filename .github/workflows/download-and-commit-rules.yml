@@ -2,8 +2,8 @@ name: Download and Commit Suricata Rules
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Se ejecuta todos los días a medianoche UTC
-  workflow_dispatch:  # Permite ejecutar manualmente el workflow
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   download-and-commit:
@@ -12,7 +12,6 @@ jobs:
     steps:
     - name: Configure SSH
       run: |
-        # Configura el agente SSH y añade la clave privada
         mkdir -p ~/.ssh
         echo "${{ secrets.SSHKEY }}" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
@@ -21,7 +20,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        ssh-key: ${{ secrets.SSHKEY }}  # Usa la clave SSH privada
+        ssh-key: ${{ secrets.SSHKEY }}
 
     - name: Download Suricata Rules
       run: |
@@ -30,16 +29,26 @@ jobs:
     - name: Extract tar.gz
       run: |
         tar -xzf paw-patrules.tar.gz
-        ls ./  # Lista el contenido para verificar la extracción
 
     - name: Move rules to repository
       run: |
-        mv rules/*.rules ./  # Asegúrate de que la ruta sea correcta
+        mv rules/*.rules ./
+
+    - name: Cleanup temporary files  # <-- Limpieza añadida
+      run: |
+        rm paw-patrules.tar.gz
+        rm -rf rules/
 
     - name: Commit changes
       run: |
         git config --global user.name "Manuel"
         git config --global user.email "manuelalberto.gorrin@gmail.com"
         git add *.rules
-        git commit -m "Update Suricata rules [skip ci]"
-        git push origin main  # Asegúrate de usar la rama correcta
+
+        # Verificar cambios antes de commit
+        if [ -n "$(git status --porcelain)" ]; then
+          git commit -m "Update Suricata rules [skip ci]"
+          git push origin main
+        else
+          echo "No hay cambios para confirmar."
+        fi
